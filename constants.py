@@ -1,4 +1,10 @@
 from datetime import datetime
+
+MySQLDBUrl = 'mysql+pymysql://root:123456@localhost'
+DBName = 'ZotMusicMysql'
+
+Seed = 1234
+
 # Users
 NumberOfUsers = 20
 PortionOfArtists = 20  # 10% to 30% (adjustable)
@@ -12,16 +18,18 @@ NumberOfRecords = 500
 PortionOfSingles = 30  # 1% to 50% of records are singles
 NumberOfSingles = int(PortionOfSingles * NumberOfRecords // 100)
 NumberOfAlbums = NumberOfRecords - NumberOfSingles
+RecordEarliestStartDate =  datetime(1980, 1, 1)
+RecordLatestEndDate = datetime(2023, 1, 1)
+
 
 # Songs
-NumberOfSongs = 2000
+ApproximateNumberOfSongs = 2000
 MinSongDuration = 120  # 2 minutes
 MaxSongDuration = 360  # 6 minutes
 
 # Sessions
 NumberOfSessions = 3000
-MinSessionDuration = 120  # 2 minutes
-MaxSessionDuration = 360  # 6 minutes
+EarliestSessionStartTime = datetime(2023, 1, 2)
 
 # Reviews
 NumberOfReviews = 1000
@@ -32,7 +40,3 @@ MaxRating = 5
 NumberOfReviewLikes = 5000
 MinLikesPerReview = 0
 MaxLikesPerReview = 50
-
-# Record Descriptions
-MinDescriptionLength = 100
-MaxDescriptionLength = 500

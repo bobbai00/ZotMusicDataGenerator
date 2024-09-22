@@ -1,27 +1,49 @@
-# generate users, eiter artist or listener
-# dependency:
+from typing import List
+import random
+from faker import Faker
+from sql.zot_music import User, Listener, Artist, Genre, UserGenres, session
+from constants import Seed, NumberOfUsers, NumberOfArtists, NumberOfListeners, EarliestJoinTime, LatestJoinTime
 
-from utils.generator import *
-from sql.zot_music import *
-from constants import NumberOfUsers, NumberOfArtists, NumberOfListeners, EarliestJoinTime, LatestJoinTime
-def create_users_listeners_artists():
+# Initialize the Faker instance with the seed
+faker = Faker()
+random.seed(Seed)
+Faker.seed(Seed)
+
+# Fixed set of 20 unique genre names
+GENRES_LIST = [
+    'Rock', 'Pop', 'Hip-Hop', 'Jazz', 'Classical', 'Electronic',
+    'Country', 'Reggae', 'Blues', 'Folk', 'Soul', 'Metal',
+    'Punk', 'Disco', 'Latin', 'Funk', 'Indie', 'R&B',
+    'Gospel', 'Techno'
+]
+
+def create_genres_users_listeners_artists() -> (List[Genre], List[User], List[Listener], List[Artist]):
     """
-    Generate and return lists of Users, Listeners, and Artists.
+    Generate and return lists of Genres, Users, Listeners, and Artists.
     Also inserts them into the database using SQLAlchemy.
     """
     # Initialize empty lists
+    genres = []
     users = []
     listeners = []
     artists = []
 
-    # Generate user data
-    nicknames = generate_random_nicknames(NumberOfUsers, seed=1234)
-    join_dates = generate_random_timestamps(EarliestJoinTime.strftime('%Y-%m-%d'), LatestJoinTime.strftime('%Y-%m-%d'),
-                                            NumberOfUsers, seed=1234)
-    first_last_names = generate_random_first_last_name_tuples(NumberOfUsers, seed=1234)
+    # Insert genres into the database
+    for genre_name in GENRES_LIST:
+        genre = Genre(genre_name=genre_name)
+        genres.append(genre)
 
-    # Generate genres for the users
-    genres_per_user = [generate_random_genres(5, seed=1234 + i) for i in range(NumberOfUsers)]
+    # Commit the genres to the database
+    session.add_all(genres)
+    session.commit()
+
+    # Retrieve the genres from the database to ensure consistency
+    all_genres = session.query(Genre).all()
+
+    # Generate user data using Faker
+    nicknames = [faker.user_name() for _ in range(NumberOfUsers)]
+    join_dates = [faker.date_between(start_date=EarliestJoinTime, end_date=LatestJoinTime) for _ in range(NumberOfUsers)]
+    first_last_names = [(faker.first_name(), faker.last_name()) for _ in range(NumberOfUsers)]
 
     for i in range(NumberOfUsers):
         user_id = f'user_{i + 1}'
@@ -37,12 +59,12 @@ def create_users_listeners_artists():
         )
         users.append(user)
 
-        # Add the user's genres
-        for genre_name in genres_per_user[i]:
-            genre = session.query(Genre).filter_by(genre_name=genre_name).first()
-            if genre:
-                user.genres.append(genre)
+        # Assign random genres to the user
+        user_genres = random.sample(all_genres, k=5)  # Each user gets 5 random genres
+        for genre in user_genres:
+            user.genres.append(genre)  # Add genres through the relationship
 
+        # Create either an artist or a listener
         if i < NumberOfArtists:
             # Create an artist
             artist = Artist(
@@ -61,14 +83,15 @@ def create_users_listeners_artists():
             )
             listeners.append(listener)
 
-    return users, listeners, artists
+    return genres, users, listeners, artists
 
 
 # Example Usage
 if __name__ == "__main__":
-    # Create users, listeners, and artists and insert them into the database
-    users, listeners, artists = create_users_listeners_artists()
+    # Create genres, users, listeners, and artists and insert them into the database
+    genres, users, listeners, artists = create_genres_users_listeners_artists()
+
     # Commit all users, listeners, and artists to the database
     session.add_all(users + artists + listeners)
     session.commit()
-    print(f"Created {len(users)} users, {len(listeners)} listeners, and {len(artists)} artists.")
+    print(f"Created {len(genres)} genres, {len(users)} users, {len(listeners)} listeners, and {len(artists)} artists.")
