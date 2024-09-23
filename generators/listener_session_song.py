@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from generators.record_single_album_song import create_records_singles_albums_songs
 from generators.user_artist_listener import create_users_listeners_artists
 from sql.zot_music import Song, Session, Listener, session
-from constants import NumberOfSessions, EarliestSessionStartTime, Seed
+from constants import NumberOfSessions, EarliestSessionStartTime, Seed, MUSIC_QUALITY_OPTIONS, DEVICE_OPTIONS
 
 # Initialize Faker with seed
 faker = Faker()
@@ -33,6 +33,10 @@ def create_sessions(listeners: List[Listener], songs: List[Song]) -> List[Sessio
         # Calculate the end time based on the session length
         end_time = start_time + timedelta(seconds=session_length)
 
+        # Randomly select a music quality and device from the predefined options
+        music_quality = random.choice(MUSIC_QUALITY_OPTIONS)
+        device = random.choice(DEVICE_OPTIONS)
+
         # Create the session
         session_obj = Session(
             session_id=session_id,
@@ -41,8 +45,8 @@ def create_sessions(listeners: List[Listener], songs: List[Song]) -> List[Sessio
             track_number=song.track_number,
             initiate_at=start_time,
             leave_at=end_time,
-            music_quality=faker.word(),
-            device=faker.word(),
+            music_quality=music_quality,
+            device=device,
             end_play_time=session_length,
             replay_count=random.randint(0, 5)  # Random replay count
         )

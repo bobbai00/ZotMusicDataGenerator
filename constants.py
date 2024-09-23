@@ -16,6 +16,8 @@ GENRES_LIST = [
     'Punk', 'Disco', 'Latin', 'Funk', 'Indie', 'R&B',
     'Gospel', 'Techno'
 ]
+MUSIC_QUALITY_OPTIONS = ['disaster', 'poor', 'normal', 'good', 'great']
+DEVICE_OPTIONS = ['mobile', 'laptop', 'desktop', 'tablet', 'smart speaker']
 
 Seed = 1234
 
