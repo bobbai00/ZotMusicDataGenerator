@@ -1,0 +1,32 @@
+name: ZotMusicDataGenerator
+channels:
+  - defaults
+dependencies:
+  - bzip2=1.0.8=h80987f9_6
+  - ca-certificates=2024.7.2=hca03da5_0
+  - cffi=1.17.1=py311h3eb5a62_0
+  - cryptography=43.0.0=py311hd4332d6_0
+  - faker=25.8.0=py311hca03da5_0
+  - greenlet=3.0.1=py311h313beb8_0
+  - libcxx=14.0.6=h848a8c0_0
+  - libffi=3.4.4=hca03da5_1
+  - ncurses=6.4=h313beb8_0
+  - openssl=3.0.15=h80987f9_0
+  - pip=24.2=py311hca03da5_0
+  - pycparser=2.21=pyhd3eb1b0_0
+  - pymysql=1.0.2=py311hca03da5_1
+  - python=3.11.9=hb885b13_0
+  - python-dateutil=2.9.0post0=py311hca03da5_2
+  - readline=8.2=h1a28f6b_0
+  - setuptools=75.1.0=py311hca03da5_0
+  - six=1.16.0=pyhd3eb1b0_1
+  - sqlalchemy=2.0.34=py311hbe2cdee_0
+  - sqlite=3.45.3=h80987f9_0
+  - tk=8.6.14=h6ba3021_0
+  - typing-extensions=4.11.0=py311hca03da5_0
+  - typing_extensions=4.11.0=py311hca03da5_0
+  - tzdata=2024a=h04d1e81_0
+  - wheel=0.44.0=py311hca03da5_0
+  - xz=5.4.6=h80987f9_1
+  - zlib=1.2.13=h18a0788_1
+prefix: /Users/baijiadong/miniconda3/envs/ZotMusicDataGenerator
