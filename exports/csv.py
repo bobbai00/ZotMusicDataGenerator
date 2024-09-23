@@ -39,16 +39,15 @@ def convert_objects_to_dict(objects):
     return result
 
 
-def export_csvs(genres, users, listeners, artists, records, singles, albums, songs, sessions, reviews, review_likes):
+def export_csvs(users, listeners, artists, records, singles, albums, songs, sessions, reviews, review_likes):
     """
     Export all lists of SQLAlchemy objects to CSV files.
     """
     # Export each table to CSV
-    save_to_csv('Genres.csv', ['genre_id', 'genre_name'], convert_objects_to_dict(genres))
-    save_to_csv('Users.csv', ['user_id', 'email', 'joined_date', 'nickname', 'street', 'city', 'state', 'zip'], convert_objects_to_dict(users))
+    save_to_csv('Users.csv', ['user_id', 'email', 'joined_date', 'nickname', 'street', 'city', 'state', 'zip', 'genres'], convert_objects_to_dict(users))
     save_to_csv('Listeners.csv', ['user_id', 'subscription', 'first_name', 'last_name'], convert_objects_to_dict(listeners))
     save_to_csv('Artists.csv', ['user_id', 'bio'], convert_objects_to_dict(artists))
-    save_to_csv('Records.csv', ['record_id', 'artist_user_id', 'title', 'release_date'], convert_objects_to_dict(records))
+    save_to_csv('Records.csv', ['record_id', 'artist_user_id', 'title', 'release_date', 'genre'], convert_objects_to_dict(records))
     save_to_csv('Singles.csv', ['record_id', 'video_url'], convert_objects_to_dict(singles))
     save_to_csv('Albums.csv', ['record_id', 'description'], convert_objects_to_dict(albums))
     save_to_csv('Songs.csv', ['record_id', 'track_number', 'title', 'length', 'bpm', 'mood'], convert_objects_to_dict(songs))

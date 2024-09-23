@@ -9,6 +9,14 @@ MySQLDBUrl = 'mysql+pymysql://root:123456@localhost'
 # required
 DBName = 'ZotMusicMysql'
 
+# Fixed set of 20 unique genre names
+GENRES_LIST = [
+    'Rock', 'Pop', 'Hip-Hop', 'Jazz', 'Classical', 'Electronic',
+    'Country', 'Reggae', 'Blues', 'Folk', 'Soul', 'Metal',
+    'Punk', 'Disco', 'Latin', 'Funk', 'Indie', 'R&B',
+    'Gospel', 'Techno'
+]
+
 Seed = 1234
 
 # Users

@@ -4,7 +4,7 @@ from faker import Faker
 from datetime import datetime, timedelta
 
 from generators.record_single_album_song import create_records_singles_albums_songs
-from generators.user_artist_listener import create_genres_users_listeners_artists
+from generators.user_artist_listener import create_users_listeners_artists
 from sql.zot_music import Song, Session, Listener, session
 from constants import NumberOfSessions, EarliestSessionStartTime, Seed
 
@@ -56,12 +56,7 @@ def create_sessions(listeners: List[Listener], songs: List[Song]) -> List[Sessio
 
 if __name__ == "__main__":
     # Create genres, users, listeners, and artists and insert them into the database
-    genres, users, listeners, artists = create_genres_users_listeners_artists()
-
-    # Commit genres first
-    session.add_all(genres)
-    session.commit()
-    print(f"Committed {len(genres)} genres")
+    users, listeners, artists = create_users_listeners_artists()
 
     # Commit users, listeners, and artists
     session.add_all(users + artists + listeners)
@@ -69,7 +64,7 @@ if __name__ == "__main__":
     print(f"Committed {len(users)} users, {len(listeners)} listeners, {len(artists)} artists")
 
     # Then create and commit records, singles, albums, and songs
-    records, singles, albums, songs = create_records_singles_albums_songs(genres, artists)
+    records, singles, albums, songs = create_records_singles_albums_songs(artists)
     session.add_all(records + singles + albums + songs)
     session.commit()
     print(f"Committed {len(records)} records, {len(singles)} singles, {len(albums)} albums, {len(songs)} songs")

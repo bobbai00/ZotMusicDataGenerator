@@ -11,6 +11,7 @@ CREATE TABLE Users (
     city           VARCHAR(255),
     state          VARCHAR(255),
     zip            VARCHAR(10),
+    genres          VARCHAR(255),
     PRIMARY KEY (user_id)
 );
 
@@ -35,6 +36,7 @@ CREATE TABLE Records (
     record_id      VARCHAR(255) NOT NULL,  -- Changed from text to VARCHAR(255)
     artist_user_id VARCHAR(255) NOT NULL,  -- Changed from text to VARCHAR(255)
     title          VARCHAR(255) NOT NULL,  -- Changed from text to VARCHAR(255)
+    genre          VARCHAR(30) NOT NULL,
     release_date   DATE,
     PRIMARY KEY (record_id),
     FOREIGN KEY (artist_user_id) REFERENCES Artists (user_id) ON DELETE CASCADE
@@ -99,28 +101,4 @@ CREATE TABLE ReviewLikes (
     PRIMARY KEY (user_id, review_id),
     FOREIGN KEY (user_id) REFERENCES Listeners(user_id) ON DELETE CASCADE,
     FOREIGN KEY (review_id) REFERENCES Reviews(review_id) ON DELETE CASCADE
-);
-
--- Create the Genres table
-CREATE TABLE Genres (
-    genre_id   INT PRIMARY KEY,
-    genre_name VARCHAR(255) NOT NULL  -- Changed from text to VARCHAR(255)
-);
-
--- Create association table for Users and Genres
-CREATE TABLE UserGenres (
-    user_id  VARCHAR(255) NOT NULL,   -- Changed from text to VARCHAR(255)
-    genre_id INT NOT NULL,
-    PRIMARY KEY (user_id, genre_id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id) ON DELETE CASCADE
-);
-
--- Create association table for Records and Genres
-CREATE TABLE RecordGenres (
-    record_id VARCHAR(255) NOT NULL,  -- Changed from text to VARCHAR(255)
-    genre_id  INT NOT NULL,
-    PRIMARY KEY (record_id, genre_id),
-    FOREIGN KEY (record_id) REFERENCES Records(record_id) ON DELETE CASCADE,
-    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id) ON DELETE CASCADE
 );

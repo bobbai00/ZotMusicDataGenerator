@@ -3,17 +3,17 @@ import random
 from faker import Faker
 from datetime import datetime
 
-from generators.user_artist_listener import create_genres_users_listeners_artists
-from sql.zot_music import Artist, Record, Single, Album, Song, Genre, session
+from generators.user_artist_listener import create_users_listeners_artists
+from sql.zot_music import Artist, Record, Single, Album, Song, session
 from constants import NumberOfAlbums, NumberOfRecords, NumberOfSingles, MinSongDuration, MaxSongDuration, Seed, \
-    RecordEarliestStartDate, RecordLatestEndDate
+    RecordEarliestStartDate, RecordLatestEndDate, GENRES_LIST
 
 # Initialize the Faker instance with the seed
 faker = Faker()
 random.seed(Seed)
 Faker.seed(Seed)
 
-def create_records_singles_albums_songs(genres: List[Genre], artists: List[Artist]) -> (List[Record], List[Single], List[Album], List[Song]):
+def create_records_singles_albums_songs(artists: List[Artist]) -> (List[Record], List[Single], List[Album], List[Song]):
     records = []
     singles = []
     albums = []
@@ -28,6 +28,7 @@ def create_records_singles_albums_songs(genres: List[Genre], artists: List[Artis
         artist = artists[i % len(artists)]
         release_date = release_dates[i]
         title = faker.sentence(nb_words=3)  # Generate random song/record title
+        chosen_genre = random.sample(GENRES_LIST, 1)
 
         if i < NumberOfSingles:
             # Create a single
@@ -39,13 +40,11 @@ def create_records_singles_albums_songs(genres: List[Genre], artists: List[Artis
                 record_id=record_id,
                 artist_user_id=artist.user_id,
                 title=title,
-                release_date=release_date
+                release_date=release_date,
+                genre=chosen_genre
             )
             records.append(record)
             singles.append(single)
-
-            # Assign random genres to the record
-            assign_random_genres(record, genres)
 
             # Each single gets exactly 1 song
             song = Song(
@@ -68,13 +67,11 @@ def create_records_singles_albums_songs(genres: List[Genre], artists: List[Artis
                 record_id=record_id,
                 artist_user_id=artist.user_id,
                 title=title,
-                release_date=release_date
+                release_date=release_date,
+                genre=chosen_genre
             )
             records.append(record)
             albums.append(album)
-
-            # Assign random genres to the album
-            assign_random_genres(record, genres)
 
             # Each album gets multiple songs (randomized number between 5 and 12)
             num_songs = random.randint(5, 12)  # Each album has between 5 to 12 songs
@@ -92,26 +89,13 @@ def create_records_singles_albums_songs(genres: List[Genre], artists: List[Artis
 
     return records, singles, albums, songs
 
-
-def assign_random_genres(record: Record, all_genres: List[Genre]):
-    """
-    Assign random genres to a record.
-    :param record: The Record object
-    :param all_genres: List of all available genres
-    """
-    num_genres = random.randint(1, 3)  # Each record can have 1 to 3 genres
-    chosen_genres = random.sample(all_genres, num_genres)
-    for genre in chosen_genres:
-        record.genres.append(genre)
-
-
 # Example Usage
 if __name__ == "__main__":
     # Create users, listeners, and artists and insert them into the database
-    genres, users, listeners, artists = create_genres_users_listeners_artists()
+    users, listeners, artists = create_users_listeners_artists()
 
     # Then create records, singles, albums, and songs
-    records, singles, albums, songs = create_records_singles_albums_songs(genres, artists)
+    records, singles, albums, songs = create_records_singles_albums_songs(artists)
 
     session.add_all(users + artists + listeners + records + singles + albums + songs)
     session.commit()

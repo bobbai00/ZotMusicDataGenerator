@@ -7,19 +7,19 @@ from generators.listener_like_review import create_review_likes
 from generators.listener_review_record import create_reviews
 from generators.listener_session_song import create_sessions
 from generators.record_single_album_song import create_records_singles_albums_songs
-from generators.user_artist_listener import create_genres_users_listeners_artists
+from generators.user_artist_listener import create_users_listeners_artists
 from sql.zot_music import session
 
 if __name__ == "__main__":
     # Create genres, users, listeners, and artists and insert them into the database
-    genres, users, listeners, artists = create_genres_users_listeners_artists()
+    users, listeners, artists = create_users_listeners_artists()
 
     # Commit genres, users, listeners, and artists first
-    session.add_all(genres + users + artists + listeners)
+    session.add_all(users + artists + listeners)
     session.commit()
 
     # Create records, singles, albums, and songs
-    records, singles, albums, songs = create_records_singles_albums_songs(genres, artists)
+    records, singles, albums, songs = create_records_singles_albums_songs(artists)
 
     # Commit records, singles, albums, and songs
     session.add_all(records + singles + albums + songs)
@@ -46,4 +46,4 @@ if __name__ == "__main__":
 
     # Export CSVs if the target format is CSV
     if TargetFormat == "csv":
-        export_csvs(genres, users, listeners, artists, records, singles, albums, songs, sessions, reviews, review_likes)
+        export_csvs(users, listeners, artists, records, singles, albums, songs, sessions, reviews, review_likes)

@@ -5,7 +5,7 @@ from datetime import datetime
 
 from generators.listener_session_song import create_sessions
 from generators.record_single_album_song import create_records_singles_albums_songs
-from generators.user_artist_listener import create_genres_users_listeners_artists
+from generators.user_artist_listener import create_users_listeners_artists
 from sql.zot_music import Review, Listener, Record, session
 from constants import NumberOfReviews, MinRating, MaxRating, Seed
 
@@ -38,14 +38,14 @@ def create_reviews(listeners: List[Listener], records: List[Record]) -> List[Rev
 # Adjust the main code to commit reviews
 if __name__ == "__main__":
     # Create genres, users, listeners, and artists and insert them into the database
-    genres, users, listeners, artists = create_genres_users_listeners_artists()
+    users, listeners, artists = create_users_listeners_artists()
 
     # Commit genres, users, listeners, and artists first
-    session.add_all(genres + users + artists + listeners)
+    session.add_all(users + artists + listeners)
     session.commit()
 
     # Create records, singles, albums, and songs
-    records, singles, albums, songs = create_records_singles_albums_songs(genres, artists)
+    records, singles, albums, songs = create_records_singles_albums_songs(artists)
 
     # Commit records, singles, albums, and songs
     session.add_all(records + singles + albums + songs)

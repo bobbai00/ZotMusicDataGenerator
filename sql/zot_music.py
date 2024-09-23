@@ -7,26 +7,6 @@ from constants import MySQLDBUrl, DBName
 
 Base = declarative_base()
 
-# Association tables for many-to-many relationships
-UserGenres = Table(
-    'UserGenres', Base.metadata,  # Changed table name to 'UserGenres'
-    Column('user_id', String(255), ForeignKey('Users.user_id', ondelete='CASCADE'), primary_key=True),
-    Column('genre_id', Integer, ForeignKey('Genres.genre_id', ondelete='CASCADE'), primary_key=True)
-)
-
-RecordGenres = Table(
-    'RecordGenres', Base.metadata,  # Changed table name to 'RecordGenres'
-    Column('record_id', String(255), ForeignKey('Records.record_id', ondelete='CASCADE'), primary_key=True),
-    Column('genre_id', Integer, ForeignKey('Genres.genre_id', ondelete='CASCADE'), primary_key=True)
-)
-
-# Genres Table
-class Genre(Base):
-    __tablename__ = 'Genres'  # Plural table name
-
-    genre_id = Column(Integer, primary_key=True)
-    genre_name = Column(String(255), nullable=False)
-
 # Users Table
 class User(Base):
     __tablename__ = 'Users'  # Plural table name
@@ -39,9 +19,7 @@ class User(Base):
     city = Column(String(255))
     state = Column(String(255))
     zip = Column(String(10))
-
-    # Many-to-many relationship with genres
-    genres = relationship('Genre', secondary=UserGenres, backref='users')
+    genres = Column(String(255))
 
 # Artists Table
 class Artist(Base):
@@ -70,10 +48,10 @@ class Record(Base):
     record_id = Column(String(255), primary_key=True)
     artist_user_id = Column(String(255), ForeignKey('Artists.user_id', ondelete='CASCADE'))
     title = Column(String(255), nullable=False)
+    genre = Column(String(30), nullable=False)  # Changed to match schema
     release_date = Column(Date)
 
     artist = relationship('Artist')
-    genres = relationship('Genre', secondary=RecordGenres, backref='records')
 
 # Singles Table
 class Single(Base):
@@ -170,6 +148,7 @@ class ReviewLike(Base):
     listener = relationship('Listener')
     review = relationship('Review')
 
+
 def drop_and_create_db(mysql_url, db_name):
     """
     Drop the specified database and recreate it.
@@ -195,5 +174,6 @@ def drop_and_create_db(mysql_url, db_name):
     session = Session()
 
     return session
+
 
 session = drop_and_create_db(MySQLDBUrl, DBName)
