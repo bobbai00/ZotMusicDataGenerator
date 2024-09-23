@@ -35,7 +35,7 @@ class Listener(Base):
     __tablename__ = 'Listeners'  # Plural table name
 
     user_id = Column(String(255), ForeignKey('Users.user_id', ondelete='CASCADE'), primary_key=True)
-    subscription = Column(String(50), CheckConstraint("subscription IN ('free', 'monthly', 'yearly')"))
+    subscription = Column(String(50), nullable=False)
     first_name = Column(String(255), nullable=False)
     last_name = Column(String(255), nullable=False)
 

@@ -3,7 +3,7 @@ import random
 from faker import Faker
 from sql.zot_music import User, Listener, Artist, session
 from constants import Seed, NumberOfUsers, NumberOfArtists, NumberOfListeners, EarliestJoinTime, LatestJoinTime, \
-    GENRES_LIST
+    GENRES_LIST, LISTENER_SUBSCRIPTION_OPTIONS
 
 # Initialize the Faker instance with the seed
 faker = Faker()
@@ -58,7 +58,7 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
                 user_id=user_id,
                 first_name=first_name,
                 last_name=last_name,
-                subscription=random.choice(['free', 'monthly', 'yearly'])
+                subscription=random.choice(LISTENER_SUBSCRIPTION_OPTIONS),
             )
             listeners.append(listener)
 

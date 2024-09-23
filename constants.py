@@ -16,8 +16,9 @@ GENRES_LIST = [
     'Punk', 'Disco', 'Latin', 'Funk', 'Indie', 'R&B',
     'Gospel', 'Techno'
 ]
-MUSIC_QUALITY_OPTIONS = ['disaster', 'poor', 'normal', 'good', 'great']
-DEVICE_OPTIONS = ['mobile', 'laptop', 'desktop', 'tablet', 'smart speaker']
+MUSIC_QUALITY_OPTIONS = ["lowest", "low", "normal", "high", "Hi-Fi", "lossless"]
+DEVICE_OPTIONS = ["mobile-browser", "mobile-app", "desktop-browser", "desktop-app"]
+LISTENER_SUBSCRIPTION_OPTIONS = ["free", "monthly-subscription", "yearly-subscription"]
 
 Seed = 1234
 
@@ -47,7 +48,7 @@ EarliestSessionStartTime = datetime(2023, 1, 2)
 
 # Reviews
 NumberOfReviews = 1000
-MinRating = 1
+MinRating = 0
 MaxRating = 5
 
 # Review Likes
