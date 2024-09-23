@@ -27,8 +27,8 @@ def create_records_singles_albums_songs(artists: List[Artist]) -> (List[Record],
         record_id = f'record_{i + 1}'
         artist = artists[i % len(artists)]
         release_date = release_dates[i]
-        title = faker.sentence(nb_words=3)  # Generate random song/record title
-        chosen_genre = random.sample(GENRES_LIST, 1)
+        title = faker.sentence(nb_words=3).rstrip('.')  # Generate random song/record title without trailing dot
+        chosen_genre = random.sample(GENRES_LIST, 1)[0]  # Random genre selection from list
 
         if i < NumberOfSingles:
             # Create a single
@@ -76,7 +76,7 @@ def create_records_singles_albums_songs(artists: List[Artist]) -> (List[Record],
             # Each album gets multiple songs (randomized number between 5 and 12)
             num_songs = random.randint(5, 12)  # Each album has between 5 to 12 songs
             for track_num in range(1, num_songs + 1):
-                song_title = faker.sentence(nb_words=3)  # Generate a random song title
+                song_title = faker.sentence(nb_words=3).rstrip('.')  # Generate a random song title without trailing dot
                 song = Song(
                     record_id=record_id,
                     track_number=track_num,
