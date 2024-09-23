@@ -1,12 +1,18 @@
 from datetime import datetime
 
+# required
+TargetFormat = "csv"
+# required
+OutputDir = "./results/zot-music-dataset-small"
+# required
 MySQLDBUrl = 'mysql+pymysql://root:123456@localhost'
+# required
 DBName = 'ZotMusicMysql'
 
 Seed = 1234
 
 # Users
-NumberOfUsers = 20
+NumberOfUsers = 200
 PortionOfArtists = 20  # 10% to 30% (adjustable)
 NumberOfArtists = int(PortionOfArtists * NumberOfUsers // 100)
 NumberOfListeners = NumberOfUsers - NumberOfArtists
@@ -21,14 +27,12 @@ NumberOfAlbums = NumberOfRecords - NumberOfSingles
 RecordEarliestStartDate =  datetime(1980, 1, 1)
 RecordLatestEndDate = datetime(2023, 1, 1)
 
-
 # Songs
-ApproximateNumberOfSongs = 2000
 MinSongDuration = 120  # 2 minutes
 MaxSongDuration = 360  # 6 minutes
 
 # Sessions
-NumberOfSessions = 3000
+NumberOfSessions = 1000
 EarliestSessionStartTime = datetime(2023, 1, 2)
 
 # Reviews
@@ -37,6 +41,6 @@ MinRating = 1
 MaxRating = 5
 
 # Review Likes
-NumberOfReviewLikes = 5000
+NumberOfReviewLikes = 1000
 MinLikesPerReview = 0
 MaxLikesPerReview = 50
