@@ -1,18 +1,20 @@
+import uuid
 from typing import List
 import random
 from faker import Faker
 from sql.zot_music import User, Listener, Artist, session
 from constants import Seed, NumberOfUsers, NumberOfArtists, NumberOfListeners, EarliestJoinTime, LatestJoinTime, \
-    GENRES_LIST, LISTENER_SUBSCRIPTION_OPTIONS
+    GENRES_LIST, LISTENER_SUBSCRIPTION_OPTIONS, generate_unique_id
 
 # Initialize the Faker instance with the seed
 faker = Faker()
 random.seed(Seed)
 Faker.seed(Seed)
 
+
 def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist]):
     """
-    Generate and return lists of Genres, Users, Listeners, and Artists.
+    Generate and return lists of Users, Listeners, and Artists.
     Also inserts them into the database using SQLAlchemy.
     """
     # Initialize empty lists
@@ -22,11 +24,13 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
 
     # Generate user data using Faker
     nicknames = [faker.user_name() for _ in range(NumberOfUsers)]
-    join_dates = [faker.date_between(start_date=EarliestJoinTime, end_date=LatestJoinTime) for _ in range(NumberOfUsers)]
+    join_dates = [faker.date_between(start_date=EarliestJoinTime, end_date=LatestJoinTime) for _ in
+                  range(NumberOfUsers)]
     first_last_names = [(faker.first_name(), faker.last_name()) for _ in range(NumberOfUsers)]
 
     for i in range(NumberOfUsers):
-        user_id = f'user_{i + 1}'
+        user_id = generate_unique_id("user")  # Generate a unique UUID for each user
+
         # Assign random genres to the user
         user_genres = ','.join(random.sample(GENRES_LIST, k=5))  # Each user gets 5 random genres
 
@@ -67,7 +71,7 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
 
 # Example Usage
 if __name__ == "__main__":
-    # Create genres, users, listeners, and artists and insert them into the database
+    # Create users, listeners, and artists and insert them into the database
     users, listeners, artists = create_users_listeners_artists()
 
     # Commit all users, listeners, and artists to the database

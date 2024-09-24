@@ -6,7 +6,8 @@ from datetime import datetime, timedelta
 from generators.record_single_album_song import create_records_singles_albums_songs
 from generators.user_artist_listener import create_users_listeners_artists
 from sql.zot_music import Song, Session, Listener, session
-from constants import NumberOfSessions, EarliestSessionStartTime, Seed, MUSIC_QUALITY_OPTIONS, DEVICE_OPTIONS
+from constants import NumberOfSessions, EarliestSessionStartTime, Seed, MUSIC_QUALITY_OPTIONS, DEVICE_OPTIONS, \
+    generate_unique_id
 
 # Initialize Faker with seed
 faker = Faker()
@@ -18,7 +19,7 @@ def create_sessions(listeners: List[Listener], songs: List[Song]) -> List[Sessio
 
     # Generate sessions
     for i in range(NumberOfSessions):
-        session_id = f'session_{i + 1}'
+        session_id = generate_unique_id("session")
 
         # Randomly select a listener and a song for this session
         listener = random.choice(listeners)

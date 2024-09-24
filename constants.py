@@ -1,4 +1,5 @@
 from datetime import datetime
+import uuid
 
 # required
 TargetFormat = "csv"
@@ -55,3 +56,7 @@ MaxRating = 5
 NumberOfReviewLikes = 1000
 MinLikesPerReview = 0
 MaxLikesPerReview = 50
+
+def generate_unique_id(prefix: str) -> str:
+    """Generate a unique ID with a given prefix."""
+    return f"{prefix}_{str(uuid.uuid4())}"

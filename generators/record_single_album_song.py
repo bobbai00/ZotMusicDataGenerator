@@ -6,7 +6,7 @@ from datetime import datetime
 from generators.user_artist_listener import create_users_listeners_artists
 from sql.zot_music import Artist, Record, Single, Album, Song, session
 from constants import NumberOfAlbums, NumberOfRecords, NumberOfSingles, MinSongDuration, MaxSongDuration, Seed, \
-    RecordEarliestStartDate, RecordLatestEndDate, GENRES_LIST
+    RecordEarliestStartDate, RecordLatestEndDate, GENRES_LIST, generate_unique_id
 
 # Initialize the Faker instance with the seed
 faker = Faker()
@@ -24,7 +24,7 @@ def create_records_singles_albums_songs(artists: List[Artist]) -> (List[Record],
 
     # Create singles and albums
     for i in range(NumberOfRecords):
-        record_id = f'record_{i + 1}'
+        record_id = generate_unique_id("record")
         artist = artists[i % len(artists)]
         release_date = release_dates[i]
         title = faker.sentence(nb_words=3).rstrip('.')  # Generate random song/record title without trailing dot
