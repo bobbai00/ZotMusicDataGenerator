@@ -19,7 +19,7 @@ def create_sessions(listeners: List[Listener], songs: List[Song]) -> List[Sessio
 
     # Generate sessions
     for i in range(NumberOfSessions):
-        session_id = generate_unique_id("session")
+        session_id = f'session_{i + 1}'
 
         # Randomly select a listener and a song for this session
         listener = random.choice(listeners)
@@ -34,9 +34,9 @@ def create_sessions(listeners: List[Listener], songs: List[Song]) -> List[Sessio
         # Calculate the end time based on the session length
         end_time = start_time + timedelta(seconds=session_length)
 
-        # Randomly select a music quality and device from the predefined options
-        music_quality = random.choice(MUSIC_QUALITY_OPTIONS)
-        device = random.choice(DEVICE_OPTIONS)
+        # Add a random delta (pause) to the end_time
+        pause_delta = timedelta(seconds=random.randint(0, 100))  # Random pause between 1 and 30 seconds
+        end_time_with_delta = end_time + pause_delta
 
         # Create the session
         session_obj = Session(
@@ -45,9 +45,9 @@ def create_sessions(listeners: List[Listener], songs: List[Song]) -> List[Sessio
             record_id=song.record_id,
             track_number=song.track_number,
             initiate_at=start_time,
-            leave_at=end_time,
-            music_quality=music_quality,
-            device=device,
+            leave_at=end_time_with_delta,  # Using the end time with added delta (pause)
+            music_quality=random.choice(['disaster', 'poor', 'normal', 'good', 'great']),
+            device=random.choice(['phone', 'tablet', 'computer', 'speaker']),
             end_play_time=session_length,
             replay_count=random.randint(0, 5)  # Random replay count
         )
