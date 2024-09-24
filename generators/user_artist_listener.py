@@ -11,6 +11,11 @@ faker = Faker()
 random.seed(Seed)
 Faker.seed(Seed)
 
+# List of common email domains
+EMAIL_DOMAINS = [
+    "gmail.com", "outlook.com", "yahoo.com", "foxmail.com", "icloud.com", "hotmail.com",
+    "college.edu", "university.edu", "mail.com", "protonmail.com"
+]
 
 def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist]):
     """
@@ -24,8 +29,7 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
 
     # Generate user data using Faker
     nicknames = [faker.user_name() for _ in range(NumberOfUsers)]
-    join_dates = [faker.date_between(start_date=EarliestJoinTime, end_date=LatestJoinTime) for _ in
-                  range(NumberOfUsers)]
+    join_dates = [faker.date_between(start_date=EarliestJoinTime, end_date=LatestJoinTime) for _ in range(NumberOfUsers)]
     first_last_names = [(faker.first_name(), faker.last_name()) for _ in range(NumberOfUsers)]
 
     for i in range(NumberOfUsers):
@@ -34,9 +38,13 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
         # Assign random genres to the user
         user_genres = ','.join(random.sample(GENRES_LIST, k=5))  # Each user gets 5 random genres
 
+        # Randomly pick an email domain from the list
+        email_domain = random.choice(EMAIL_DOMAINS)
+        email = f'{nicknames[i]}@{email_domain}'
+
         user = User(
             user_id=user_id,
-            email=f'{nicknames[i]}@example.com',
+            email=email,
             joined_date=join_dates[i],
             nickname=nicknames[i],
             street=faker.street_address(),
