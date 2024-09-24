@@ -7,7 +7,7 @@ from generators.listener_session_song import create_sessions
 from generators.record_single_album_song import create_records_singles_albums_songs
 from generators.user_artist_listener import create_users_listeners_artists
 from sql.zot_music import Review, Listener, Record, session
-from constants import NumberOfReviews, MinRating, MaxRating, Seed, generate_unique_id
+from constants import NumberOfReviews, MinRating, MaxRating, Seed, generate_unique_id, RecordLatestEndDate
 
 # Initialize the Faker instance with the seed
 faker = Faker()
@@ -29,7 +29,7 @@ def create_reviews(listeners: List[Listener], records: List[Record]) -> List[Rev
             record_id=record.record_id,
             rating=rating,
             body=faker.text(max_nb_chars=200),  # Generate random review body text
-            posted_at=faker.date_time_between(start_date='-2y', end_date='now')  # Random timestamp
+            posted_at=faker.date_time_between(start_date=RecordLatestEndDate, end_date='now')  # Random timestamp
         )
         reviews.append(review)
 
