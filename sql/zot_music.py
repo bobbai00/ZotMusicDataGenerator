@@ -26,6 +26,7 @@ class Artist(Base):
     __tablename__ = 'Artists'  # Plural table name
 
     user_id = Column(String(255), ForeignKey('Users.user_id', ondelete='CASCADE'), primary_key=True)
+    stagename = Column(String(255))
     bio = Column(Text)
 
     user = relationship('User')
@@ -49,7 +50,7 @@ class Record(Base):
     artist_user_id = Column(String(255), ForeignKey('Artists.user_id', ondelete='CASCADE'))
     title = Column(String(255), nullable=False)
     genre = Column(String(30), nullable=False)  # Changed to match schema
-    release_date = Column(Date)
+    release_date = Column(Date, nullable=False)
 
     artist = relationship('Artist')
 
@@ -58,7 +59,7 @@ class Single(Base):
     __tablename__ = 'Singles'  # Plural table name
 
     record_id = Column(String(255), ForeignKey('Records.record_id', ondelete='CASCADE'), primary_key=True)
-    video_url = Column(Text, nullable=False)
+    video_url = Column(Text)
 
     record = relationship('Record')
 
@@ -80,7 +81,7 @@ class Song(Base):
     title = Column(String(255), nullable=False)
     length = Column(Integer, nullable=False)  # Song length in seconds
     bpm = Column(Integer)
-    mood = Column(String(255), nullable=False)
+    mood = Column(String(255))
 
     record = relationship('Record')
 

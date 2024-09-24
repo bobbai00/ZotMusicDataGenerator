@@ -52,7 +52,8 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
             # Create an artist
             artist = Artist(
                 user_id=user_id,
-                bio=faker.text(max_nb_chars=200)
+                bio=faker.text(max_nb_chars=200),
+                stagename=faker.text(max_nb_chars=50).rstrip('.')
             )
             artists.append(artist)
         else:

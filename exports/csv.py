@@ -46,7 +46,7 @@ def export_csvs(users, listeners, artists, records, singles, albums, songs, sess
     # Export each table to CSV
     save_to_csv('Users.csv', ['user_id', 'email', 'joined_date', 'nickname', 'street', 'city', 'state', 'zip', 'genres'], convert_objects_to_dict(users))
     save_to_csv('Listeners.csv', ['user_id', 'subscription', 'first_name', 'last_name'], convert_objects_to_dict(listeners))
-    save_to_csv('Artists.csv', ['user_id', 'bio'], convert_objects_to_dict(artists))
+    save_to_csv('Artists.csv', ['user_id', 'bio', 'stagename'], convert_objects_to_dict(artists))
     save_to_csv('Records.csv', ['record_id', 'artist_user_id', 'title', 'release_date', 'genre'], convert_objects_to_dict(records))
     save_to_csv('Singles.csv', ['record_id', 'video_url'], convert_objects_to_dict(singles))
     save_to_csv('Albums.csv', ['record_id', 'description'], convert_objects_to_dict(albums))
