@@ -19,7 +19,7 @@ GENRES_LIST = [
 ]
 MUSIC_QUALITY_OPTIONS = ["lowest", "low", "normal", "high", "Hi-Fi", "lossless"]
 DEVICE_OPTIONS = ["mobile-browser", "mobile-app", "desktop-browser", "desktop-app"]
-LISTENER_SUBSCRIPTION_OPTIONS = ["free", "monthly-subscription", "yearly-subscription"]
+LISTENER_SUBSCRIPTION_OPTIONS = ["free", "monthly", "yearly"]
 
 Seed = 1234
 
@@ -27,7 +27,6 @@ Seed = 1234
 NumberOfUsers = 200
 PortionOfArtists = 20  # 10% to 30% (adjustable)
 NumberOfArtists = int(PortionOfArtists * NumberOfUsers // 100)
-NumberOfListeners = NumberOfUsers - NumberOfArtists
 EarliestJoinTime = datetime(2015, 1, 1)
 LatestJoinTime = datetime(2023, 1, 1)
 

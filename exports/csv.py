@@ -51,6 +51,6 @@ def export_csvs(users, listeners, artists, records, singles, albums, songs, sess
     save_to_csv('Singles.csv', ['record_id', 'video_url'], convert_objects_to_dict(singles))
     save_to_csv('Albums.csv', ['record_id', 'description'], convert_objects_to_dict(albums))
     save_to_csv('Songs.csv', ['record_id', 'track_number', 'title', 'length', 'bpm', 'mood'], convert_objects_to_dict(songs))
-    save_to_csv('Sessions.csv', ['session_id', 'user_id', 'record_id', 'track_number', 'initiate_at', 'leave_at', 'music_quality', 'device', 'end_play_time', 'replay_count'], convert_objects_to_dict(sessions))
+    save_to_csv('Sessions.csv', ['session_id', 'user_id', 'record_id', 'track_number', 'initiate_at', 'leave_at', 'music_quality', 'device', 'remaining_time', 'replay_count'], convert_objects_to_dict(sessions))
     save_to_csv('Reviews.csv', ['review_id', 'user_id', 'record_id', 'rating', 'body', 'posted_at'], convert_objects_to_dict(reviews))
     save_to_csv('ReviewLikes.csv', ['user_id', 'review_id'], convert_objects_to_dict(review_likes))

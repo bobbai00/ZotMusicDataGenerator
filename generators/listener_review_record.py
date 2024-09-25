@@ -23,12 +23,15 @@ def create_reviews(listeners: List[Listener], records: List[Record]) -> List[Rev
         record = random.choice(records)      # Randomly pick a record
         rating = random.randint(MinRating, MaxRating)  # Random rating between min and max
 
+        # Generate random review body text and remove/replace any newlines with a space
+        review_body = faker.text(max_nb_chars=200).replace(",", ' ').replace('\n', ' ').replace("\r", " ")
+
         review = Review(
             review_id=review_id,
             user_id=listener.user_id,
             record_id=record.record_id,
             rating=rating,
-            body=faker.text(max_nb_chars=200),  # Generate random review body text
+            body=review_body,  # Ensure the review body has no newlines
             posted_at=faker.date_time_between(start_date=RecordLatestEndDate, end_date='now')  # Random timestamp
         )
         reviews.append(review)

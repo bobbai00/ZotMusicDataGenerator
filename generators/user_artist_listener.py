@@ -3,7 +3,7 @@ from typing import List
 import random
 from faker import Faker
 from sql.zot_music import User, Listener, Artist, session
-from constants import Seed, NumberOfUsers, NumberOfArtists, NumberOfListeners, EarliestJoinTime, LatestJoinTime, \
+from constants import Seed, NumberOfUsers, NumberOfArtists, EarliestJoinTime, LatestJoinTime, \
     GENRES_LIST, LISTENER_SUBSCRIPTION_OPTIONS, generate_unique_id
 
 # Initialize the Faker instance with the seed
@@ -20,7 +20,7 @@ EMAIL_DOMAINS = [
 def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist]):
     """
     Generate and return lists of Users, Listeners, and Artists.
-    Also inserts them into the database using SQLAlchemy.
+    Some users may be both artists and listeners.
     """
     # Initialize empty lists
     users = []
@@ -32,11 +32,14 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
     join_dates = [faker.date_between(start_date=EarliestJoinTime, end_date=LatestJoinTime) for _ in range(NumberOfUsers)]
     first_last_names = [(faker.first_name(), faker.last_name()) for _ in range(NumberOfUsers)]
 
+    # Randomly select a subset of users to be both listeners and artists
+    overlap_users = set(random.sample(range(NumberOfUsers), random.randint(1, NumberOfUsers // 2)))
+
     for i in range(NumberOfUsers):
         user_id = generate_unique_id("user")  # Generate a unique UUID for each user
 
         # Assign random genres to the user
-        user_genres = ','.join(random.sample(GENRES_LIST, k=5))  # Each user gets 5 random genres
+        user_genres = ','.join(random.sample(GENRES_LIST, k=random.randint(1, 5)))  # Each user gets between 1 to 5 random genres
 
         # Randomly pick an email domain from the list
         email_domain = random.choice(EMAIL_DOMAINS)
@@ -55,8 +58,8 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
         )
         users.append(user)
 
-        # Create either an artist or a listener
-        if i < NumberOfArtists:
+        # If this user should be both an artist and a listener, create both roles
+        if i < NumberOfArtists or i in overlap_users:
             # Create an artist
             artist = Artist(
                 user_id=user_id,
@@ -64,7 +67,8 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
                 stagename=faker.text(max_nb_chars=50).rstrip('.')
             )
             artists.append(artist)
-        else:
+
+        if i >= NumberOfArtists or i in overlap_users:
             # Create a listener
             first_name, last_name = first_last_names[i]
             listener = Listener(

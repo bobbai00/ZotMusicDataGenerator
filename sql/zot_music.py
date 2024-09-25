@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, Column, String, Integer, ForeignKey, Table, Date, Text, CheckConstraint, \
     TIMESTAMP, text, Index, and_, ForeignKeyConstraint
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
@@ -102,7 +103,7 @@ class Session(Base):
     leave_at = Column(TIMESTAMP, nullable=False)
     music_quality = Column(String(255), nullable=False)
     device = Column(String(255), nullable=False)
-    end_play_time = Column(Integer, nullable=False)  # how long this session is
+    remaining_time = Column(Integer, nullable=False)  # how long this song has left
     replay_count = Column(Integer)
 
     listener = relationship('Listener')
@@ -150,31 +151,47 @@ class ReviewLike(Base):
     review = relationship('Review')
 
 
-def drop_and_create_db(mysql_url, db_name):
+def create_db_if_not_exists(mysql_url, db_name):
     """
-    Drop the specified database and recreate it.
+    Check if the database exists, create it if it doesn't.
     :param mysql_url: The MySQL connection URL without the database name (e.g., 'mysql+pymysql://user:password@localhost')
-    :param db_name: The name of the database to drop and recreate
+    :param db_name: The name of the database to create
     """
     # Connect to MySQL without specifying the database
     engine = create_engine(mysql_url)
-
-    # Drop the database if it exists, then recreate it
     with engine.connect() as connection:
-        connection.execute(text(f"DROP DATABASE IF EXISTS {db_name};"))
-        connection.execute(text(f"CREATE DATABASE {db_name};"))
+        try:
+            # Check if the database exists by attempting to use it
+            connection.execute(text(f"USE {db_name};"))
+            print(f"Database {db_name} exists. No need to create it.")
+        except OperationalError:
+            # If the database doesn't exist, create it
+            print(f"Database {db_name} does not exist. Creating it.")
+            connection.execute(text(f"CREATE DATABASE {db_name};"))
 
-    # Update the engine to connect to the newly created database
+def drop_and_create_tables(mysql_url, db_name):
+    """
+    Drop all tables in the database (if they exist) and recreate them.
+    :param mysql_url: The MySQL connection URL with the database name (e.g., 'mysql+pymysql://user:password@localhost/dbname')
+    :param db_name: The name of the database where tables are to be dropped and recreated
+    """
+    # Create the database if it doesn't exist
+    create_db_if_not_exists(mysql_url, db_name)
+
+    # Connect to the database with the specified schema
     engine = create_engine(f"{mysql_url}/{db_name}")
 
-    # Create all tables
-    Base.metadata.create_all(engine)
+    # Drop all tables if they exist, and recreate them
+    Base.metadata.drop_all(engine)  # Drop all existing tables
+    Base.metadata.create_all(engine)  # Recreate tables
 
     # Set up the session
     Session = sessionmaker(bind=engine)
     session = Session()
 
+    print(f"All tables in the database '{db_name}' have been dropped and recreated.")
+
     return session
 
-
-session = drop_and_create_db(MySQLDBUrl, DBName)
+# Usage
+session = drop_and_create_tables(MySQLDBUrl, DBName)
