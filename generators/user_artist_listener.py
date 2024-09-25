@@ -39,7 +39,12 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
         user_id = generate_unique_id("user")  # Generate a unique UUID for each user
 
         # Assign random genres to the user
-        user_genres = ','.join(random.sample(GENRES_LIST, k=random.randint(1, 10)))  # Each user gets between 1 to 5 random genres
+        # Use Gaussian distribution to select a number of genres (between 1 and 10)
+        num_genres = int(abs(random.gauss(mu=5, sigma=2)))  # Mean of 5 genres, standard deviation of 2
+        # Clamp the number of genres to be between 1 and 10
+        num_genres = max(1, min(10, num_genres))
+        # Assign random genres to the user based on Gaussian-distributed `num_genres`
+        user_genres = ','.join(random.sample(GENRES_LIST, k=num_genres)) # Each user gets between 1 to 5 random genres
 
         # Randomly pick an email domain from the list
         email_domain = random.choice(EMAIL_DOMAINS)

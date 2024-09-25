@@ -31,7 +31,7 @@ def create_records_singles_albums_songs(artists: List[Artist]) -> (List[Record],
         record_id = generate_unique_id("record")
         artist = artists[i % len(artists)]
         # Apply random nullability to release_date
-        release_date = release_dates[i] if random_null(probability=NullValueProbability) else None
+        release_date = release_dates[i]
         title = faker.sentence(nb_words=3).rstrip('.')  # Generate random song/record title without trailing dot
         chosen_genre = random.sample(GENRES_LIST, 1)[0]  # Random genre selection from list
 

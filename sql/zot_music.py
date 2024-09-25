@@ -51,7 +51,7 @@ class Record(Base):
     artist_user_id = Column(String(255), ForeignKey('Artists.user_id', ondelete='CASCADE'))
     title = Column(String(255), nullable=False)
     genre = Column(String(30), nullable=False)  # Changed to match schema
-    release_date = Column(Date)
+    release_date = Column(Date, nullable=False)
 
     artist = relationship('Artist')
 
