@@ -7,12 +7,17 @@ from generators.listener_session_song import create_sessions
 from generators.record_single_album_song import create_records_singles_albums_songs
 from generators.user_artist_listener import create_users_listeners_artists
 from sql.zot_music import Review, Listener, Record, session
-from constants import NumberOfReviews, MinRating, MaxRating, Seed, generate_unique_id, RecordLatestEndDate
+from constants import NumberOfReviews, MinRating, MaxRating, Seed, generate_unique_id, RecordLatestEndDate, \
+    NullValueProbability
 
 # Initialize the Faker instance with the seed
 faker = Faker()
 random.seed(Seed)
 Faker.seed(Seed)
+
+# Function to randomly return None with a certain probability
+def random_null(probability=0.2):
+    return None if random.random() < probability else True
 
 def create_reviews(listeners: List[Listener], records: List[Record]) -> List[Review]:
     reviews = []
@@ -23,15 +28,18 @@ def create_reviews(listeners: List[Listener], records: List[Record]) -> List[Rev
         record = random.choice(records)      # Randomly pick a record
         rating = random.randint(MinRating, MaxRating)  # Random rating between min and max
 
-        # Generate random review body text and remove/replace any newlines with a space
-        review_body = faker.text(max_nb_chars=200).replace(",", ' ').replace('\n', ' ').replace("\r", " ")
+        # Generate random review body text, but make it occasionally NULL
+        if random_null(NullValueProbability):  # 30% chance of being NULL
+            review_body = None
+        else:
+            review_body = faker.text(max_nb_chars=200).replace(",", ' ').replace('\n', ' ').replace("\r", " ")
 
         review = Review(
             review_id=review_id,
             user_id=listener.user_id,
             record_id=record.record_id,
             rating=rating,
-            body=review_body,  # Ensure the review body has no newlines
+            body=review_body,  # Set the review body, which might be NULL
             posted_at=faker.date_time_between(start_date=RecordLatestEndDate, end_date='now')  # Random timestamp
         )
         reviews.append(review)

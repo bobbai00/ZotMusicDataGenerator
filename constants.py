@@ -22,6 +22,7 @@ DEVICE_OPTIONS = ["mobile-browser", "mobile-app", "desktop-browser", "desktop-ap
 LISTENER_SUBSCRIPTION_OPTIONS = ["free", "monthly", "yearly"]
 
 Seed = 1234
+NullValueProbability = 0.2
 
 # Users
 NumberOfUsers = 200

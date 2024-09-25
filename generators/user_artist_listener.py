@@ -4,7 +4,7 @@ import random
 from faker import Faker
 from sql.zot_music import User, Listener, Artist, session
 from constants import Seed, NumberOfUsers, NumberOfArtists, EarliestJoinTime, LatestJoinTime, \
-    GENRES_LIST, LISTENER_SUBSCRIPTION_OPTIONS, generate_unique_id
+    GENRES_LIST, LISTENER_SUBSCRIPTION_OPTIONS, generate_unique_id, NullValueProbability
 
 # Initialize the Faker instance with the seed
 faker = Faker()
@@ -39,22 +39,28 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
         user_id = generate_unique_id("user")  # Generate a unique UUID for each user
 
         # Assign random genres to the user
-        user_genres = ','.join(random.sample(GENRES_LIST, k=random.randint(1, 5)))  # Each user gets between 1 to 5 random genres
+        user_genres = ','.join(random.sample(GENRES_LIST, k=random.randint(1, 10)))  # Each user gets between 1 to 5 random genres
 
         # Randomly pick an email domain from the list
         email_domain = random.choice(EMAIL_DOMAINS)
         email = f'{nicknames[i]}@{email_domain}'
 
+        # Optional fields: street, city, state, and zip may be NULL
+        street = faker.street_address() if random.random() > NullValueProbability else None  # 20% chance of being NULL
+        city = faker.city() if random.random() > NullValueProbability else None
+        state = faker.state() if random.random() > NullValueProbability else None  # 30% chance of being NULL
+        zip_code = faker.zipcode() if random.random() > NullValueProbability else None  # 10% chance of being NULL
+
         user = User(
             user_id=user_id,
-            email=email,
-            joined_date=join_dates[i],
-            nickname=nicknames[i],
-            street=faker.street_address(),
-            city=faker.city(),
-            state=faker.state(),
-            zip=faker.zipcode(),
-            genres=user_genres,
+            email=email,  # NOT NULL
+            joined_date=join_dates[i],  # NOT NULL
+            nickname=nicknames[i],  # NOT NULL
+            street=street,  # Optional
+            city=city,  # Optional
+            state=state,  # Optional
+            zip=zip_code,  # Optional
+            genres=user_genres,  # Optional
         )
         users.append(user)
 

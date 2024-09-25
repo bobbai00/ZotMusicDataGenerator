@@ -6,12 +6,16 @@ from datetime import datetime
 from generators.user_artist_listener import create_users_listeners_artists
 from sql.zot_music import Artist, Record, Single, Album, Song, session
 from constants import NumberOfAlbums, NumberOfRecords, NumberOfSingles, MinSongDuration, MaxSongDuration, Seed, \
-    RecordEarliestStartDate, RecordLatestEndDate, GENRES_LIST, generate_unique_id
+    RecordEarliestStartDate, RecordLatestEndDate, GENRES_LIST, generate_unique_id, NullValueProbability
 
 # Initialize the Faker instance with the seed
 faker = Faker()
 random.seed(Seed)
 Faker.seed(Seed)
+
+# Function to randomly return None with a certain probability
+def random_null(probability=NullValueProbability):
+    return None if random.random() < probability else True
 
 def create_records_singles_albums_songs(artists: List[Artist]) -> (List[Record], List[Single], List[Album], List[Song]):
     records = []
@@ -26,15 +30,17 @@ def create_records_singles_albums_songs(artists: List[Artist]) -> (List[Record],
     for i in range(NumberOfRecords):
         record_id = generate_unique_id("record")
         artist = artists[i % len(artists)]
-        release_date = release_dates[i]
+        # Apply random nullability to release_date
+        release_date = release_dates[i] if random_null(probability=NullValueProbability) else None
         title = faker.sentence(nb_words=3).rstrip('.')  # Generate random song/record title without trailing dot
         chosen_genre = random.sample(GENRES_LIST, 1)[0]  # Random genre selection from list
 
         if i < NumberOfSingles:
             # Create a single
+            video_url = faker.url()
             single = Single(
                 record_id=record_id,
-                video_url=faker.url()
+                video_url=video_url
             )
             record = Record(
                 record_id=record_id,
@@ -52,13 +58,13 @@ def create_records_singles_albums_songs(artists: List[Artist]) -> (List[Record],
                 track_number=1,
                 title=title,
                 length=random.randint(MinSongDuration, MaxSongDuration),
-                bpm=random.randint(60, 180),
+                bpm=random.randint(60, 180) if random_null(probability=NullValueProbability) else None,  # Randomly null bpm
                 mood=faker.word()
             )
             songs.append(song)
         else:
             # Create an album
-            description = faker.text(max_nb_chars=200)  # Generate a random album description
+            description = faker.text(max_nb_chars=200) if random_null(probability=NullValueProbability) else None  # Randomly null description
             album = Album(
                 record_id=record_id,
                 description=description
@@ -82,7 +88,7 @@ def create_records_singles_albums_songs(artists: List[Artist]) -> (List[Record],
                     track_number=track_num,
                     title=song_title,
                     length=random.randint(MinSongDuration, MaxSongDuration),
-                    bpm=random.randint(60, 180),
+                    bpm=random.randint(60, 180) if random_null(probability=NullValueProbability) else None,  # Randomly null bpm
                     mood=faker.word()
                 )
                 songs.append(song)

@@ -7,12 +7,16 @@ from generators.record_single_album_song import create_records_singles_albums_so
 from generators.user_artist_listener import create_users_listeners_artists
 from sql.zot_music import Song, Session, Listener, session
 from constants import NumberOfSessions, EarliestSessionStartTime, Seed, MUSIC_QUALITY_OPTIONS, DEVICE_OPTIONS, \
-    generate_unique_id
+    generate_unique_id, NullValueProbability
 
 # Initialize Faker with seed
 faker = Faker()
 random.seed(Seed)
 Faker.seed(Seed)
+
+# Function to randomly return None with a certain probability
+def random_null(probability=0.2):
+    return None if random.random() < probability else True
 
 def create_sessions(listeners: List[Listener], songs: List[Song]) -> List[Session]:
     sessions = []
@@ -35,7 +39,7 @@ def create_sessions(listeners: List[Listener], songs: List[Song]) -> List[Sessio
         end_time = start_time + timedelta(seconds=session_length)
 
         # Add a random delta (pause) to the end_time
-        pause_delta = timedelta(seconds=random.randint(0, 100))  # Random pause between 1 and 30 seconds
+        pause_delta = timedelta(seconds=random.randint(0, 100))  # Random pause between 1 and 100 seconds
         end_time_with_delta = end_time + pause_delta
 
         # Create the session
@@ -49,7 +53,7 @@ def create_sessions(listeners: List[Listener], songs: List[Song]) -> List[Sessio
             music_quality=random.choice(MUSIC_QUALITY_OPTIONS),
             device=random.choice(DEVICE_OPTIONS),
             remaining_time=session_length,
-            replay_count=random.randint(0, 5)  # Random replay count
+            replay_count=random.randint(0, 5) if random_null(NullValueProbability) else None  # Randomly null replay_count with 20% chance
         )
         sessions.append(session_obj)
 
@@ -81,4 +85,3 @@ if __name__ == "__main__":
     print(f"Committed {len(sessions)} sessions")
 
     print(f"Data generation and insertion completed successfully.")
-
