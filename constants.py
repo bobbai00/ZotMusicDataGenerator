@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime
 import uuid
 
@@ -32,31 +33,28 @@ EarliestJoinTime = datetime(2015, 1, 1)
 LatestJoinTime = datetime(2023, 1, 1)
 
 # Records
-NumberOfRecords = 500
+NumberOfRecords = 1000
 PortionOfSingles = 30  # 1% to 50% of records are singles
 NumberOfSingles = int(PortionOfSingles * NumberOfRecords // 100)
 NumberOfAlbums = NumberOfRecords - NumberOfSingles
-RecordEarliestStartDate =  datetime(1980, 1, 1)
-RecordLatestEndDate = datetime(2023, 1, 1)
+RecordEarliestStartDate = datetime(2020, 1, 1)
+RecordLatestEndDate = datetime(2024, 1, 1)
 
 # Songs
-MinSongDuration = 120  # 2 minutes
-MaxSongDuration = 360  # 6 minutes
+MinSongDuration = 60  # 2 minutes # normal distri
+MaxSongDuration = 600  # 6 minutes
 
 # Sessions
-NumberOfSessions = 1000
+NumberOfSessions = 50000
 EarliestSessionStartTime = datetime(2023, 1, 2)
 
 # Reviews
-NumberOfReviews = 1000
-MinRating = 0
-MaxRating = 5
+
 
 # Review Likes
-NumberOfReviewLikes = 1000
-MinLikesPerReview = 0
-MaxLikesPerReview = 50
+# 0 - 500 per record
 
 def generate_unique_id(prefix: str) -> str:
-    """Generate a unique ID with a given prefix."""
-    return f"{prefix}_{str(uuid.uuid4())}"
+    """Generate a short unique ID with a given prefix."""
+    short_uuid = base64.urlsafe_b64encode(uuid.uuid4().bytes).decode('utf-8').rstrip("=")[:8]
+    return f"{prefix}_{short_uuid}"

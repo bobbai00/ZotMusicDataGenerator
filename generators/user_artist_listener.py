@@ -56,6 +56,7 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
         state = faker.state() if random.random() > NullValueProbability else None  # 30% chance of being NULL
         zip_code = faker.zipcode() if random.random() > NullValueProbability else None  # 10% chance of being NULL
 
+
         user = User(
             user_id=user_id,
             email=email,  # NOT NULL
@@ -71,11 +72,12 @@ def create_users_listeners_artists() -> (List[User], List[Listener], List[Artist
 
         # If this user should be both an artist and a listener, create both roles
         if i < NumberOfArtists or i in overlap_users:
+            stagename = faker.user_name() if random.random() > NullValueProbability else None
             # Create an artist
             artist = Artist(
                 user_id=user_id,
                 bio=faker.text(max_nb_chars=200),
-                stagename=faker.text(max_nb_chars=50).rstrip('.')
+                stagename=stagename
             )
             artists.append(artist)
 

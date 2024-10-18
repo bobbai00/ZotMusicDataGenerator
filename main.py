@@ -2,7 +2,7 @@ import csv
 import os
 
 from constants import TargetFormat
-from exports.csv import export_csvs
+from exports.csv_exporter import export_csvs
 from generators.listener_like_review import create_review_likes
 from generators.listener_review_record import create_reviews
 from generators.listener_session_song import create_sessions
@@ -18,27 +18,36 @@ if __name__ == "__main__":
     session.add_all(users + artists + listeners)
     session.commit()
 
+    print("finish users")
+
     # Create records, singles, albums, and songs
     records, singles, albums, songs = create_records_singles_albums_songs(artists)
 
     # Commit records, singles, albums, and songs
     session.add_all(records + singles + albums + songs)
     session.commit()
+    print("finish records")
 
     # Create sessions and commit them
     sessions = create_sessions(listeners, songs)
     session.add_all(sessions)
     session.commit()
+    print("finish sessions")
+
 
     # Create reviews and commit them
     reviews = create_reviews(listeners, records)
     session.add_all(reviews)
     session.commit()
+    print("finish reviews")
+
 
     # Create review likes and commit them
     review_likes = create_review_likes(reviews, listeners)
     session.add_all(review_likes)
     session.commit()
+    print("finish review likes")
+
 
     print(f"Created {len(users)} users, {len(listeners)} listeners, {len(artists)} artists, {len(records)} records, "
           f"{len(singles)} singles, {len(albums)} albums, {len(songs)} songs, {len(sessions)} sessions, "

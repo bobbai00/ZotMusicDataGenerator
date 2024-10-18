@@ -5,7 +5,7 @@ from datetime import datetime
 
 from generators.user_artist_listener import create_users_listeners_artists
 from sql.zot_music import Artist, Record, Single, Album, Song, session
-from constants import NumberOfAlbums, NumberOfRecords, NumberOfSingles, MinSongDuration, MaxSongDuration, Seed, \
+from constants import NumberOfRecords, NumberOfSingles, MinSongDuration, MaxSongDuration, Seed, \
     RecordEarliestStartDate, RecordLatestEndDate, GENRES_LIST, generate_unique_id, NullValueProbability
 
 # Initialize the Faker instance with the seed
@@ -16,6 +16,13 @@ Faker.seed(Seed)
 # Function to randomly return None with a certain probability
 def random_null(probability=NullValueProbability):
     return None if random.random() < probability else True
+
+# Function to generate song length using a Gaussian distribution
+def generate_gaussian_length(min_length, max_length, mean=None, std_dev=None):
+    mean = mean if mean is not None else (min_length + max_length) / 2  # Default mean is the midpoint of min and max
+    std_dev = std_dev if std_dev is not None else (max_length - min_length) / 6  # Default std dev covers 99.7% within bounds
+    length = abs(random.gauss(mean, std_dev))  # Gaussian distribution to generate length
+    return int(max(min_length, min(max_length, length)))  # Clamp within the min and max
 
 def create_records_singles_albums_songs(artists: List[Artist]) -> (List[Record], List[Single], List[Album], List[Song]):
     records = []
@@ -57,7 +64,7 @@ def create_records_singles_albums_songs(artists: List[Artist]) -> (List[Record],
                 record_id=record_id,
                 track_number=1,
                 title=title,
-                length=random.randint(MinSongDuration, MaxSongDuration),
+                length=generate_gaussian_length(MinSongDuration, MaxSongDuration),  # Gaussian distribution for length
                 bpm=random.randint(60, 180) if random_null(probability=NullValueProbability) else None,  # Randomly null bpm
                 mood=faker.word()
             )
@@ -87,7 +94,7 @@ def create_records_singles_albums_songs(artists: List[Artist]) -> (List[Record],
                     record_id=record_id,
                     track_number=track_num,
                     title=song_title,
-                    length=random.randint(MinSongDuration, MaxSongDuration),
+                    length=generate_gaussian_length(MinSongDuration, MaxSongDuration),  # Gaussian distribution for length
                     bpm=random.randint(60, 180) if random_null(probability=NullValueProbability) else None,  # Randomly null bpm
                     mood=faker.word()
                 )
