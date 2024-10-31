@@ -26,14 +26,14 @@ Seed = 1234
 NullValueProbability = 0.2
 
 # Users
-NumberOfUsers = 200
+NumberOfUsers = 20
 PortionOfArtists = 20  # 10% to 30% (adjustable)
 NumberOfArtists = int(PortionOfArtists * NumberOfUsers // 100)
 EarliestJoinTime = datetime(2015, 1, 1)
 LatestJoinTime = datetime(2023, 1, 1)
 
 # Records
-NumberOfRecords = 1000
+NumberOfRecords = 100
 PortionOfSingles = 30  # 1% to 50% of records are singles
 NumberOfSingles = int(PortionOfSingles * NumberOfRecords // 100)
 NumberOfAlbums = NumberOfRecords - NumberOfSingles
@@ -45,7 +45,7 @@ MinSongDuration = 60  # 2 minutes # normal distri
 MaxSongDuration = 600  # 6 minutes
 
 # Sessions
-NumberOfSessions = 50000
+NumberOfSessions = 500
 EarliestSessionStartTime = datetime(2023, 1, 2)
 
 # Reviews

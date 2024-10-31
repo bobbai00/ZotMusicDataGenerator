@@ -25,7 +25,7 @@ def generate_gaussian_rating(mean=3.5, std_dev=1.5):
 
 def create_reviews(listeners: List[Listener], records: List[Record], mean_reviews: int = 10, std_dev: int = 5) -> List[Review]:
     reviews = []
-
+    trimmed_listeners = listeners[:-10]
     for record in records:
         # Generate the number of reviews for this record using a Gaussian distribution
         num_reviews = int(abs(random.gauss(mean_reviews, std_dev)))  # Gaussian with mean and std_dev
@@ -36,7 +36,7 @@ def create_reviews(listeners: List[Listener], records: List[Record], mean_review
         # For each review, pick a random listener and generate a review
         for _ in range(num_reviews):
             review_id = generate_unique_id("review")
-            listener = random.choice(listeners)  # Randomly pick a listener
+            listener = random.choice(trimmed_listeners)  # Randomly pick a listener
             rating = generate_gaussian_rating()  # Gaussian-distributed rating
 
             # Generate random review body text, but make it occasionally NULL
