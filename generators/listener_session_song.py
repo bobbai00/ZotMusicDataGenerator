@@ -18,6 +18,11 @@ Faker.seed(Seed)
 def random_null(probability=0.2):
     return None if random.random() < probability else True
 
+# Function to generate a random number of likes for each review based on Gaussian distribution
+def generate_gaussian_sessions(mean=100, std_dev=50, max_sessions=200):
+    likes = abs(random.gauss(mean, std_dev))  # Gaussian distribution for likes
+    return int(min(max_sessions, likes))  # Clamp the number of likes between 0 and max_likes
+
 def create_sessions(listeners: List[Listener], songs: List[Song]) -> List[Session]:
     sessions = []
 

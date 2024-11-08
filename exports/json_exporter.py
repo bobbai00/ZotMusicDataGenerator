@@ -1,26 +1,13 @@
+import csv
 import os
-
 import psycopg2
 import json
 import random
 
 RANDOM_SEED = 42
 
-
 def shuffle_list(data_list):
-    """
-    Shuffle the items in the list in a reproducible manner.
-
-    Parameters:
-    - data_list (list): List of items to shuffle.
-
-    Returns:
-    - list: The shuffled list.
-    """
-    # Set the random seed for reproducibility
     random.seed(RANDOM_SEED)
-
-    # Shuffle the list in place
     random.shuffle(data_list)
     return data_list
 
@@ -35,20 +22,22 @@ conn = psycopg2.connect(
 
 # Cursor for executing queries
 cur = conn.cursor()
-# Set search path to zotmusic schema
 cur.execute("SET search_path TO zotmusic;")
 
-target_dir = './results/zot-music-dataset-assignment6'
+target_dir = './results/zot-music-dataset-assignment5'
 
 def get_target_path(filename):
     return os.path.join(target_dir, filename)
 
-
-# Helper function to omit null fields
 def omit_null_fields(data):
     if isinstance(data, dict):
         return {k: omit_null_fields(v) for k, v in data.items() if v is not None}
     return data
+
+# New function to write all data as a JSON array in a single file
+def write_json_array(data, filename):
+    with open(get_target_path(filename), 'w') as f:
+        json.dump(data, f, indent=2)
 
 # 1. Transform Users Data
 def transform_users():
@@ -100,12 +89,10 @@ def transform_users():
             user["stage_name"] = row[14]
             user["bio"] = row[15]
 
-        # Remove fields with None values
         users.append(omit_null_fields(user))
 
     users = shuffle_list(users)
-    with open(get_target_path("Users.json"), "w") as f:
-        json.dump(users, f, indent=2)
+    write_json_array(users, "Users.json")
 
 # 2. Transform Records Data
 def transform_records():
@@ -142,7 +129,6 @@ def transform_records():
         if row[8]:
             record["video_url"] = row[8]
 
-        # Fetch associated songs
         cur.execute("""
             SELECT track_number, title, length, bpm, mood 
             FROM Songs 
@@ -156,12 +142,10 @@ def transform_records():
             for song in cur.fetchall()
         ]
 
-        # Remove fields with None values
         records.append(omit_null_fields(record))
 
     records = shuffle_list(records)
-    with open(get_target_path("Records.json"), "w") as f:
-        json.dump(records, f, indent=2)
+    write_json_array(records, "Records.json")
 
 # 3. Transform Reviews Data
 def transform_reviews():
@@ -181,12 +165,9 @@ def transform_reviews():
             "rating": row[3],
             "body": row[4]
         }
-
-        # Remove fields with None values
         reviews.append(omit_null_fields(review))
 
-    with open(get_target_path("Reviews.json"), "w") as f:
-        json.dump(reviews, f, indent=2)
+    write_json_array(reviews, "Reviews.json")
 
 # 4. Transform Sessions Data
 def transform_sessions():
@@ -214,26 +195,35 @@ def transform_sessions():
             "remaining_time": row[8],
             "replay_count": row[9]
         }
-
-        # Remove fields with None values
         sessions.append(omit_null_fields(session))
 
-    with open(get_target_path("Sessions.json"), "w") as f:
-        json.dump(sessions, f, indent=2)
+    write_json_array(sessions, "Sessions.json")
 
 # 5. Transform ReviewLikes Data
-def transform_reviewlikes():
-    cur.execute("SELECT user_id, review_id FROM ReviewLikes")
-    reviewlikes = [{"user_id": row[0], "review_id": row[1]} for row in cur.fetchall()]
-    with open(get_target_path("ReviewLikes.json"), "w") as f:
-        json.dump(reviewlikes, f, indent=2)
+# def transform_reviewlikes():
+#     cur.execute("SELECT user_id, review_id FROM ReviewLikes")
+#     reviewlikes = [{"user_id": row[0], "review_id": row[1]} for row in cur.fetchall()]
+#     write_json_array(reviewlikes, "ReviewLikes.json")
+
+
+def transform_reviewlikes_csv():
+    # Open and read from the CSV file
+    with open('/Users/baijiadong/Desktop/cs244P/ZotMusicDataGenerator/results/zot-music-dataset-small/ReviewLikes.csv', mode='r') as file:
+        csv_reader = csv.DictReader(file)
+
+        # Create a list of dictionaries from the CSV data
+        reviewlikes = [{"user_id": row["user_id"], "review_id": row["review_id"]} for row in csv_reader]
+
+    # Write the list of dictionaries to a JSON file
+    write_json_array(reviewlikes, "ReviewLikes.json")
 
 # Call transformation functions
-transform_users()
-transform_records()
-transform_reviews()
-transform_sessions()
-transform_reviewlikes()
+# transform_users()
+# transform_records()
+# transform_reviews()
+# transform_sessions()
+# transform_reviewlikes()
+transform_reviewlikes_csv()
 
 # Close connection
 cur.close()

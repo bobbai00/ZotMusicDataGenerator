@@ -26,14 +26,14 @@ Seed = 1234
 NullValueProbability = 0.2
 
 # Users
-NumberOfUsers = 20
+NumberOfUsers = 5000
 PortionOfArtists = 20  # 10% to 30% (adjustable)
 NumberOfArtists = int(PortionOfArtists * NumberOfUsers // 100)
 EarliestJoinTime = datetime(2015, 1, 1)
 LatestJoinTime = datetime(2023, 1, 1)
 
 # Records
-NumberOfRecords = 100
+NumberOfRecords = 20000
 PortionOfSingles = 30  # 1% to 50% of records are singles
 NumberOfSingles = int(PortionOfSingles * NumberOfRecords // 100)
 NumberOfAlbums = NumberOfRecords - NumberOfSingles
@@ -45,7 +45,7 @@ MinSongDuration = 60  # 2 minutes # normal distri
 MaxSongDuration = 600  # 6 minutes
 
 # Sessions
-NumberOfSessions = 500
+NumberOfSessions = 2000000
 EarliestSessionStartTime = datetime(2023, 1, 2)
 
 # Reviews
@@ -56,5 +56,5 @@ EarliestSessionStartTime = datetime(2023, 1, 2)
 
 def generate_unique_id(prefix: str) -> str:
     """Generate a short unique ID with a given prefix."""
-    short_uuid = base64.urlsafe_b64encode(uuid.uuid4().bytes).decode('utf-8').rstrip("=")[:8]
+    short_uuid = base64.urlsafe_b64encode(uuid.uuid4().bytes).decode('utf-8').rstrip("=")[:12]
     return f"{prefix}_{short_uuid}"
