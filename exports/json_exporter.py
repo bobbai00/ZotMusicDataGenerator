@@ -1,5 +1,7 @@
 import csv
 import os
+from datetime import datetime
+
 import psycopg2
 import json
 import random
@@ -24,20 +26,26 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 cur.execute("SET search_path TO zotmusic;")
 
-target_dir = './results/zot-music-dataset-assignment5'
+target_dir = './results/zot-music-dataset-assignment6'
 
-def get_target_path(filename):
-    return os.path.join(target_dir, filename)
+def get_target_path(filename, is_jsonl):
+    suffix = ".jsonl" if is_jsonl else ".json"
+    return os.path.join(target_dir, f"{filename}{suffix}")
 
 def omit_null_fields(data):
     if isinstance(data, dict):
         return {k: omit_null_fields(v) for k, v in data.items() if v is not None}
     return data
 
-# New function to write all data as a JSON array in a single file
-def write_json_array(data, filename):
-    with open(get_target_path(filename), 'w') as f:
-        json.dump(data, f, indent=2)
+# New function to write all data as a JSON array or JSON Lines
+def write_json_array(data, filename, is_jsonl=False):
+    file_path = get_target_path(filename, is_jsonl)
+    with open(file_path, 'w') as f:
+        if is_jsonl:
+            for item in data:
+                f.write(json.dumps(item) + "\n")
+        else:
+            json.dump(data, f, indent=2)
 
 # 1. Transform Users Data
 def transform_users():
@@ -92,7 +100,7 @@ def transform_users():
         users.append(omit_null_fields(user))
 
     users = shuffle_list(users)
-    write_json_array(users, "Users.json")
+    write_json_array(users, "Users", is_jsonl=True)
 
 # 2. Transform Records Data
 def transform_records():
@@ -145,7 +153,7 @@ def transform_records():
         records.append(omit_null_fields(record))
 
     records = shuffle_list(records)
-    write_json_array(records, "Records.json")
+    write_json_array(records, "Records", is_jsonl=True)
 
 # 3. Transform Reviews Data
 def transform_reviews():
@@ -167,7 +175,7 @@ def transform_reviews():
         }
         reviews.append(omit_null_fields(review))
 
-    write_json_array(reviews, "Reviews.json")
+    write_json_array(reviews, "Reviews", is_jsonl=True)
 
 # 4. Transform Sessions Data
 def transform_sessions():
@@ -197,33 +205,22 @@ def transform_sessions():
         }
         sessions.append(omit_null_fields(session))
 
-    write_json_array(sessions, "Sessions.json")
+    # Sort sessions by session_duration.initiate_at (in ascending order)
+    sessions.sort(key=lambda x: datetime.strptime(x["session_duration"]["initiate_at"], "%Y-%m-%d %H:%M:%S"))
+    write_json_array(sessions, "Sessions", is_jsonl=True)
 
 # 5. Transform ReviewLikes Data
-# def transform_reviewlikes():
-#     cur.execute("SELECT user_id, review_id FROM ReviewLikes")
-#     reviewlikes = [{"user_id": row[0], "review_id": row[1]} for row in cur.fetchall()]
-#     write_json_array(reviewlikes, "ReviewLikes.json")
-
-
-def transform_reviewlikes_csv():
-    # Open and read from the CSV file
-    with open('/Users/baijiadong/Desktop/cs244P/ZotMusicDataGenerator/results/zot-music-dataset-small/ReviewLikes.csv', mode='r') as file:
-        csv_reader = csv.DictReader(file)
-
-        # Create a list of dictionaries from the CSV data
-        reviewlikes = [{"user_id": row["user_id"], "review_id": row["review_id"]} for row in csv_reader]
-
-    # Write the list of dictionaries to a JSON file
-    write_json_array(reviewlikes, "ReviewLikes.json")
+def transform_reviewlikes():
+    cur.execute("SELECT user_id, review_id FROM ReviewLikes")
+    reviewlikes = [{"user_id": row[0], "review_id": row[1]} for row in cur.fetchall()]
+    write_json_array(reviewlikes, "ReviewLikes", is_jsonl=True)
 
 # Call transformation functions
-# transform_users()
-# transform_records()
-# transform_reviews()
-# transform_sessions()
-# transform_reviewlikes()
-transform_reviewlikes_csv()
+transform_users()
+transform_records()
+transform_reviews()
+transform_sessions()
+transform_reviewlikes()
 
 # Close connection
 cur.close()

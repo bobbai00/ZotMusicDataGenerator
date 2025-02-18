@@ -5,47 +5,46 @@ import uuid
 # required
 TargetFormat = "csv"
 # required
-OutputDir = "./results/zot-music-dataset-small"
+OutputDir = "./results/zot-streaming-dataset-small"
 # required
 MySQLDBUrl = 'mysql+pymysql://root:123456@localhost'
 # required
-DBName = 'ZotMusicMysql'
+DBName = 'cs122a_hw2'
 
 # Fixed set of 20 unique genre names
 GENRES_LIST = [
-    'Rock', 'Pop', 'Hip-Hop', 'Jazz', 'Classical', 'Electronic',
-    'Country', 'Reggae', 'Blues', 'Folk', 'Soul', 'Metal',
-    'Punk', 'Disco', 'Latin', 'Funk', 'Indie', 'R&B',
-    'Gospel', 'Techno'
+    "Action", "Adventure", "Comedy", "Drama", "Horror", "Thriller", "Mystery",
+    "Sci-Fi", "Fantasy", "Romance", "Animation", "Crime", "Musical", "Documentary",
+    "War", "Western", "Historical", "Sports", "Family", "Biography"
 ]
-MUSIC_QUALITY_OPTIONS = ["lowest", "low", "normal", "high", "Hi-Fi", "lossless"]
-DEVICE_OPTIONS = ["mobile-browser", "mobile-app", "desktop-browser", "desktop-app"]
-LISTENER_SUBSCRIPTION_OPTIONS = ["free", "monthly", "yearly"]
+VIDEO_QUALITY_OPTIONS = ['480p', '720p', '1080p']
+DEVICE_OPTIONS = ['mobile', 'desktop']
+VIEWER_SUBSCRIPTION_OPTIONS = ["free", "monthly", "yearly"]
 
 Seed = 1234
 NullValueProbability = 0.2
 
 # Users
-NumberOfUsers = 5000
+NumberOfUsers = 200
 PortionOfArtists = 20  # 10% to 30% (adjustable)
-NumberOfArtists = int(PortionOfArtists * NumberOfUsers // 100)
+NumberOfProducers = int(PortionOfArtists * NumberOfUsers // 100)
 EarliestJoinTime = datetime(2015, 1, 1)
 LatestJoinTime = datetime(2023, 1, 1)
 
 # Records
-NumberOfRecords = 20000
-PortionOfSingles = 30  # 1% to 50% of records are singles
-NumberOfSingles = int(PortionOfSingles * NumberOfRecords // 100)
-NumberOfAlbums = NumberOfRecords - NumberOfSingles
-RecordEarliestStartDate = datetime(2020, 1, 1)
-RecordLatestEndDate = datetime(2024, 1, 1)
+NumberOfReleases = 1000
+PortionOfMovies = 30  # 1% to 50% of records are singles
+NumberOfMovies = int(PortionOfMovies * NumberOfReleases // 100)
+NumberOfSeries = NumberOfReleases - NumberOfMovies
+ReleaseEarliestStartDate = datetime(2020, 1, 1)
+ReleaseLatestEndDate = datetime(2024, 1, 1)
 
 # Songs
-MinSongDuration = 60  # 2 minutes # normal distri
-MaxSongDuration = 600  # 6 minutes
+MinVideoDuration = 60  # 60 minutes # normal distri
+MaxVideoDuration = 600  # 600 minutes
 
 # Sessions
-NumberOfSessions = 2000000
+NumberOfSessions = 5000
 EarliestSessionStartTime = datetime(2023, 1, 2)
 
 # Reviews
